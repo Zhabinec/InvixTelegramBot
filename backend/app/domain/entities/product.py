@@ -27,7 +27,7 @@ class Product:
         if not self.request_key.strip():
             raise ValueError("Request key cannot be empty")
 
-        if self.status == ProductStatus.READY and not self.image_key or not self.image_key.strip():
+        if self.status == ProductStatus.READY and (not self.image_key or not self.image_key.strip()):
             raise ValueError("Ready product must have an image")
 
     def mark_ready(self, image_key: str) -> "Product":
