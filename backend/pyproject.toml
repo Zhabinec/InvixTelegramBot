@@ -12,7 +12,8 @@ dependencies = [
     "uvicorn[standard]",
     "sqlalchemy[asyncio]>=2.0,<3",
     "asyncpg>=0.31,<1",
-    "pydantic-settings>=2,<3"
+    "pydantic-settings>=2,<3",
+    "alembic>=1.16,<2"
 ]
 
 [tool.setuptools.packages.find]

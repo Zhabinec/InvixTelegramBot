@@ -14,7 +14,13 @@ app/domain/value_objects/__init__.py
 app/domain/value_objects/image_key.py
 app/domain/value_objects/request_key.py
 app/infrastructure/__init__.py
+app/infrastructure/config.py
 app/infrastructure/database.py
+app/infrastructure/database/__init__.py
+app/infrastructure/database/base.py
+app/infrastructure/database/connection.py
+app/infrastructure/database/models/__init__.py
+app/infrastructure/database/models/product.py
 app/presentation/__init__.py
 invix_shop_backend.egg-info/PKG-INFO
 invix_shop_backend.egg-info/SOURCES.txt
