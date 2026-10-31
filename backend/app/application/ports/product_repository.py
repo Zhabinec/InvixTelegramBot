@@ -1,7 +1,9 @@
+
 from typing import Protocol
 from uuid import UUID
 
 from app.domain.entities.product import Product
+from app.domain.value_objects.image_key import ImageKey
 
 
 class ProductRepository(Protocol):
@@ -13,7 +15,7 @@ class ProductRepository(Protocol):
     async def mark_ready(
         self,
         product_id: UUID,
-        image_key: str
+        image_key: ImageKey
     ) -> Product:
         """Publish a product after its image is uploaded."""
         ...

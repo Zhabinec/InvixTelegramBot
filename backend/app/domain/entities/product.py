@@ -4,6 +4,7 @@ from enum import Enum
 from uuid import UUID
 
 from app.domain.value_objects.image_key import ImageKey
+from app.domain.value_objects.request_key import RequestKey
 
 class ProductStatus(str, Enum):
     PENDING = "pending"
@@ -14,7 +15,7 @@ class Product:
     id: UUID
     title: str
     image_sha256:str
-    request_key:str
+    request_key: RequestKey
     created_at:datetime
     status: ProductStatus = ProductStatus.PENDING
     image_key: ImageKey | None = None
@@ -26,8 +27,8 @@ class Product:
         if len(self.title.strip()) > 120:
             raise ValueError("Product title is too long")
 
-        if not self.request_key.strip():
-            raise ValueError("Request key cannot be empty")
+        if not isinstance(self.request_key, RequestKey):
+            raise ValueError("Invalid request key")
 
         if self.status == ProductStatus.READY and not isinstance(self.image_key, ImageKey):
             raise ValueError("Ready product must have a valid image key")

@@ -5,7 +5,7 @@ from uuid import uuid4
 
 from app.domain.entities.product import Product, ProductStatus
 from app.domain.value_objects.image_key import ImageKey
-
+from app.domain.value_objects.request_key import RequestKey
 
 class TestProduct(unittest.TestCase):
 
@@ -14,7 +14,7 @@ class TestProduct(unittest.TestCase):
             id=uuid4(),
             title=title,
             image_sha256="test_hash",
-            request_key="test_request",
+            request_key=RequestKey("test_request"),
             created_at=datetime.now(timezone.utc)
         )
 
