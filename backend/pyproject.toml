@@ -9,7 +9,10 @@ description = "Clean Architecture backend for Telegram Shop"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi",
-    "uvicorn[standard]"
+    "uvicorn[standard]",
+    "sqlalchemy[asyncio]>=2.0,<3",
+    "asyncpg>=0.31,<1",
+    "pydantic-settings>=2,<3"
 ]
 
 [tool.setuptools.packages.find]

@@ -5,3 +5,6 @@ Summary: Clean Architecture backend for Telegram Shop
 Requires-Python: >=3.13
 Requires-Dist: fastapi
 Requires-Dist: uvicorn[standard]
+Requires-Dist: sqlalchemy[asyncio]<3,>=2.0
+Requires-Dist: asyncpg<1,>=0.31
+Requires-Dist: pydantic-settings<3,>=2
