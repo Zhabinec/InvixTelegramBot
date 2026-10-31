@@ -95,3 +95,23 @@ class PostgresProductRepository:
 
             return ProductMapper.to_domain(model)
 
+    
+    async def list_ready(self) -> list[Product]:
+        statement = (
+            select(ProductORM)
+            .where(ProductORM.status == ProductStatus.READY)
+            .order_by(
+                ProductORM.created_at.desc(),
+                ProductORM.id.desc()
+            )
+        )
+
+        async with self._session_factory() as session:
+            result = await session.scalars(statement)
+
+            return [
+                ProductMapper.to_domain(model)
+                for model in result.all()
+            ]
+
+
