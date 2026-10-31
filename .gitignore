@@ -30,3 +30,7 @@ Thumbs.db
 
 # Local storage
 infra/data/
+
+# Python packaging
+*.egg-info/
+build/
