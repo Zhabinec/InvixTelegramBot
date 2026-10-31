@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from uuid import uuid4
 
 from app.domain.entities.product import Product, ProductStatus
+from app.domain.value_objects.image_key import ImageKey
 
 
 class TestProduct(unittest.TestCase):
@@ -26,10 +27,11 @@ class TestProduct(unittest.TestCase):
     def test_product_can_be_published(self):
         product = self.create_product()
 
-        published = product.mark_ready("products/image.jpg")
+        image_key = ImageKey.for_product(product.id)
+        published = product.mark_ready(image_key)
 
         self.assertEqual(published.status, ProductStatus.READY)
-        self.assertEqual(published.image_key, "products/image.jpg")
+        self.assertEqual(published.image_key, image_key)
         self.assertEqual(product.status, ProductStatus.PENDING)
 
     def test_empty_title_is_invalid(self):
@@ -44,15 +46,20 @@ class TestProduct(unittest.TestCase):
 
     def test_repeated_publish_is_idempotent(self):
         product = self.create_product()
-        published = product.mark_ready("products/image.jpg")
+        image_key = ImageKey.for_product(product.id)
 
-        repeated = published.mark_ready("products/image.jpg")
+        published = product.mark_ready(image_key)
+        repeated = published.mark_ready(image_key)
 
         self.assertIs(repeated, published)
 
     def test_cannot_replace_published_image(self):
         product = self.create_product()
-        published = product.mark_ready("products/image.jpg")
+
+        original_key = ImageKey.for_product(product.id)
+        another_key = ImageKey.for_product(uuid4())
+
+        published = product.mark_ready(original_key)
 
         with self.assertRaises(ValueError):
-            published.mark_ready("products/other.jpg")
+            published.mark_ready(another_key)
