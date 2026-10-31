@@ -13,7 +13,8 @@ dependencies = [
     "sqlalchemy[asyncio]>=2.0,<3",
     "asyncpg>=0.31,<1",
     "pydantic-settings>=2,<3",
-    "alembic>=1.16,<2"
+    "alembic>=1.16,<2",
+    "minio>=7.2.20,<8"
 ]
 
 [tool.setuptools.packages.find]

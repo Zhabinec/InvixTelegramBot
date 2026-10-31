@@ -20,3 +20,18 @@ class DatabaseSettings(BaseSettings):
     postgres_db: str
     postgres_host: str = "127.0.0.1"
     postgres_port: int = 5433
+
+
+class MinioSettings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=ENV_PATH,
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+    minio_root_user: str
+    minio_root_password: SecretStr
+    minio_endpoint: str = "127.0.0.1:9000"
+    minio_bucket: str = "products"
+    minio_secure: bool = False
+
