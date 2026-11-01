@@ -16,6 +16,31 @@ services:
 
     volumes:
       - minio_data:/data
+  
+  
+  frontend:
+    image: invix-frontend:latest
+    restart: unless-stopped
+    environment:
+      BACKEND_URL: http://host.docker.internal:8001
+      MINIO_UPSTREAM_ORIGIN: http://minio:9000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.frontend.entrypoints=web"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+
+  gateway:
+    image: traefik:v3.7
+    restart: unless-stopped
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "127.0.0.1:18081:80"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
   db:
     image: postgres:17-alpine

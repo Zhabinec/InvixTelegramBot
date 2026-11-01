@@ -2,8 +2,12 @@
 import type { Product } from "@/types/product";
 import Image from "next/image";
 import { Suspense } from "react";
+import { connection } from "next/server";
+
 
 async function getProducts(): Promise<Product[]> {
+  await connection();
+
   const backendUrl = process.env.BACKEND_URL;
 
   if (!backendUrl) {
@@ -20,6 +24,7 @@ async function getProducts(): Promise<Product[]> {
 
   return (await response.json()) as Product[];
 }
+
 
 async function ProductCatalog() {
   const products = await getProducts();

@@ -28,11 +28,21 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const response = await fetch(url.toString(), {
+    const upstreamOrigin =
+      process.env.MINIO_UPSTREAM_ORIGIN ?? MINIO_ORIGIN;
+
+    const upstreamUrl = new URL(
+      `${url.pathname}${url.search}`,
+      upstreamOrigin,
+    );
+
+    const response = await fetch(upstreamUrl, {
+      headers: {
+        Host: url.host,
+      },
       cache: "no-store",
       redirect: "error",
     });
-
     if (!response.ok || !response.body) {
       return new Response("Image unavailable", { status: 502 });
     }
