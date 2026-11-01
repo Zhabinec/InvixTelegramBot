@@ -27,7 +27,7 @@ async function ProductCatalog() {
   return (
     <main className="telegram-page mx-auto max-w-3xl">
       <h1 className="mb-8 text-3xl font-bold">
-        Telegram Shop
+        Каталог
       </h1>
 
       {products.length === 0 ? (

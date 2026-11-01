@@ -18,3 +18,4 @@ class BotSettings(BaseSettings):
     admin_api_token: SecretStr
     backend_url: str = "http://127.0.0.1:8000"
     telegram_admin_id: int
+    mini_app_url: str

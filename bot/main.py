@@ -1,38 +1,63 @@
-import asyncio
-import httpx
 
-from aiogram import Bot, Dispatcher, Router
-from aiogram.filters import CommandStart
-from aiogram.types import Message
+import asyncio
+
+import httpx
+from aiogram import Bot, Dispatcher, F, Router
+from aiogram.filters import Command, CommandStart
+from aiogram.types import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Message,
+    WebAppInfo,
+)
 
 from config import BotSettings
-
+from filters.admin import AdminFilter
 from handlers.products import build_products_router
-
-router = Router()
-
-
-
-@router.message(CommandStart())
-async def start_handler(message: Message) -> None:
-    if message.from_user is None:
-        return
-
-    await message.answer(
-        f"Invix Bot Shop starting\n"
-        f"Telegram ID: {message.from_user.id}"
-    )
-
 
 
 async def main() -> None:
     settings = BotSettings()
 
-    bot = Bot(
-        token=settings.bot_token.get_secret_value()
+    bot = Bot(token=settings.bot_token.get_secret_value())
+    dispatcher = Dispatcher()
+    router = Router()
+
+    catalog_keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="Открыть каталог",
+                    web_app=WebAppInfo(url=settings.mini_app_url),
+                )
+            ]
+        ]
     )
 
-    dispatcher = Dispatcher()
+    @router.message(CommandStart())
+    async def start_handler(message: Message) -> None:
+        await message.answer(
+            "У меня есть товар",
+            reply_markup=catalog_keyboard,
+        )
+
+    @router.message(
+        Command("create_product"),
+        AdminFilter(settings.telegram_admin_id),
+    )
+    async def create_product_handler(message: Message) -> None:
+        await message.answer(
+            "Отправь фотографию товара с названием "
+            "в подписи одним сообщением."
+        )
+
+    @router.message(F.text)
+    async def text_handler(message: Message) -> None:
+        await message.answer(
+            "У меня есть товар",
+            reply_markup=catalog_keyboard,
+        )
+
     dispatcher.include_router(router)
 
     async with httpx.AsyncClient(
