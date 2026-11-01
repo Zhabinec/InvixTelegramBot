@@ -43,7 +43,7 @@ async function ProductCatalog() {
             >
               <div className="relative aspect-square bg-zinc-100">
                 <Image
-                  src={product.image_url}
+                  src={`/api/images?url=${encodeURIComponent(product.image_url)}`}
                   alt={product.title}
                   fill
                   sizes="(max-width: 640px) 50vw, 33vw"
