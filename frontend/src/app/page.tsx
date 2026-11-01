@@ -34,7 +34,7 @@ async function ProductCatalog() {
         <p>Пока нет товаров</p>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-          {products.map((product) => (
+          {products.map((product, index) => (
             <article
               key={product.id}
               className="overflow-hidden rounded-2xl border border-zinc-200 bg-white"
@@ -46,6 +46,7 @@ async function ProductCatalog() {
                   fill
                   sizes="(max-width: 640px) 50vw, 33vw"
                   unoptimized
+                  loading={index < 2 ? "eager" : "lazy"}
                   className="object-cover"
                 />
               </div>
