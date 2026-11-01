@@ -10,11 +10,17 @@ from config import BotSettings
 router = Router()
 
 
+
 @router.message(CommandStart())
 async def start_handler(message: Message) -> None:
+    if message.from_user is None:
+        return
+
     await message.answer(
-        "Invix Bot Shop starting"
+        f"Invix Bot Shop starting\n"
+        f"Telegram ID: {message.from_user.id}"
     )
+
 
 
 async def main() -> None:

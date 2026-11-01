@@ -1,6 +1,10 @@
 
 {
   "folders": [
+     {
+      "name": "Project Root",
+      "path": "."
+    },
     {
       "name": "Backend",
       "path": "backend"
