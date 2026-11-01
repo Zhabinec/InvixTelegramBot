@@ -25,19 +25,21 @@ async function ProductCatalog() {
   const products = await getProducts();
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-10">
+    <main className="telegram-page mx-auto max-w-3xl">
       <h1 className="mb-8 text-3xl font-bold">
         Telegram Shop
       </h1>
 
       {products.length === 0 ? (
-        <p>Пока нет товаров</p>
+        <p className="telegram-hint text-center">
+          Пока нет товаров
+        </p>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           {products.map((product, index) => (
             <article
               key={product.id}
-              className="overflow-hidden rounded-2xl border border-zinc-200 bg-white"
+              className="telegram-product-card overflow-hidden rounded-2xl"
             >
               <div className="relative aspect-square bg-zinc-100">
                 <Image
@@ -52,7 +54,7 @@ async function ProductCatalog() {
               </div>
 
               <div className="p-4">
-                <h2 className="text-sm font-semibold text-zinc-900">
+                <h2 className="text-sm font-semibold">
                   {product.title}
                 </h2>
               </div>

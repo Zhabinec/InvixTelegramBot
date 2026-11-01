@@ -24,3 +24,25 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+
+.telegram-page {
+  min-height: 100dvh;
+
+  background-color: var(--tg-theme-bg-color, #ffffff);
+  color: var(--tg-theme-text-color, #18181b);
+
+  padding-top: calc(24px + var(--tg-content-safe-area-inset-top, 0px));
+  padding-bottom: calc(24px + var(--tg-content-safe-area-inset-bottom, 0px));
+  padding-left: calc(16px + var(--tg-content-safe-area-inset-left, 0px));
+  padding-right: calc(16px + var(--tg-content-safe-area-inset-right, 0px));
+}
+
+.telegram-product-card {
+  background-color: var(--tg-theme-secondary-bg-color, #f4f4f5);
+  color: var(--tg-theme-text-color, #18181b);
+}
+
+.telegram-hint {
+  color: var(--tg-theme-hint-color, #71717a);
+}
