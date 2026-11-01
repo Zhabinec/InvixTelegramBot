@@ -1,4 +1,5 @@
 import asyncio
+import httpx
 
 from aiogram import Bot, Dispatcher, Router
 from aiogram.filters import CommandStart
@@ -6,6 +7,7 @@ from aiogram.types import Message
 
 from config import BotSettings
 
+from handlers.products import build_products_router
 
 router = Router()
 
@@ -33,7 +35,15 @@ async def main() -> None:
     dispatcher = Dispatcher()
     dispatcher.include_router(router)
 
-    await dispatcher.start_polling(bot)
+    async with httpx.AsyncClient(
+        base_url=settings.backend_url,
+        timeout=30.0,
+    ) as api_client:
+        dispatcher.include_router(
+            build_products_router(settings, api_client)
+        )
+
+        await dispatcher.start_polling(bot)
 
 
 if __name__ == "__main__":
