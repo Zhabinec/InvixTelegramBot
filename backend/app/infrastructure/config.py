@@ -35,3 +35,12 @@ class MinioSettings(BaseSettings):
     minio_bucket: str = "products"
     minio_secure: bool = False
 
+
+class ApiSettings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=ENV_PATH,
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+    admin_api_token: SecretStr

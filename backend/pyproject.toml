@@ -14,7 +14,8 @@ dependencies = [
     "asyncpg>=0.31,<1",
     "pydantic-settings>=2,<3",
     "alembic>=1.16,<2",
-    "minio>=7.2.20,<8"
+    "minio>=7.2.20,<8",
+    "python-multipart>=0.0.20,<1"
 ]
 
 [tool.setuptools.packages.find]

@@ -23,6 +23,7 @@ from app.infrastructure.repositories.postgres_product_repository import (
 from app.infrastructure.storage.minio_image_storage import MinioImageStorage
 
 
+
 class TestCreateProductIntegration(IsolatedAsyncioTestCase):
     async def test_create_product(self) -> None:
         database_settings = DatabaseSettings(postgres_db="shop_test_db")

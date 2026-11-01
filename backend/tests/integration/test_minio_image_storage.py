@@ -8,8 +8,12 @@ from minio import Minio
 from app.domain.value_objects.image_key import ImageKey
 from app.infrastructure.config import MinioSettings
 from app.infrastructure.storage.minio_image_storage import MinioImageStorage
+from urllib.request import urlopen
 
-
+def download_object(url: str) -> bytes:
+    with urlopen(url, timeout=10) as response:
+        return response.read()
+    
 class TestMinioImageStorage(IsolatedAsyncioTestCase):
     async def test_upload(self) -> None:
         settings = MinioSettings()
@@ -42,6 +46,16 @@ class TestMinioImageStorage(IsolatedAsyncioTestCase):
 
             self.assertEqual(metadata.size, len(content))
             self.assertEqual(metadata.content_type, "image/jpeg")
+            
+            download_url = await storage.get_download_url(key)
+
+            downloaded_content = await asyncio.to_thread(
+                download_object,
+                download_url,
+            )
+
+            self.assertEqual(downloaded_content, content)
+
 
         finally:
             if uploaded:

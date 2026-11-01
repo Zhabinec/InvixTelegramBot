@@ -25,7 +25,16 @@ app/infrastructure/database/models/__init__.py
 app/infrastructure/database/models/product.py
 app/infrastructure/repositories/__init__.py
 app/infrastructure/repositories/postgres_product_repository.py
+app/infrastructure/storage/__init__.py
+app/infrastructure/storage/minio_image_storage.py
 app/presentation/__init__.py
+app/presentation/api/__init__.py
+app/presentation/api/dependencies.py
+app/presentation/api/main.py
+app/presentation/api/routes/__init__.py
+app/presentation/api/routes/products.py
+app/presentation/api/schemas/__init__.py
+app/presentation/api/schemas/product.py
 invix_shop_backend.egg-info/PKG-INFO
 invix_shop_backend.egg-info/SOURCES.txt
 invix_shop_backend.egg-info/dependency_links.txt
