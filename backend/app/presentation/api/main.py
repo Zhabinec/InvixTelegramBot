@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+from app.presentation.api.routes.products import router as products_router
 from app.infrastructure.config import DatabaseSettings, MinioSettings
 from app.infrastructure.database.connection import create_database
 from app.infrastructure.storage.minio_image_storage import MinioImageStorage
@@ -29,6 +30,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+app.include_router(products_router)
 
 @app.get("/health")
 async def health() -> dict[str, str]:
