@@ -1,5 +1,7 @@
 
 import type { Product } from "@/types/product";
+import Image from "next/image";
+import { Suspense } from "react";
 
 async function getProducts(): Promise<Product[]> {
   const backendUrl = process.env.BACKEND_URL;
@@ -19,7 +21,7 @@ async function getProducts(): Promise<Product[]> {
   return (await response.json()) as Product[];
 }
 
-export default async function Home() {
+async function ProductCatalog() {
   const products = await getProducts();
 
   return (
@@ -31,28 +33,40 @@ export default async function Home() {
       {products.length === 0 ? (
         <p>Пока нет товаров</p>
       ) : (
-        <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           {products.map((product) => (
             <article
               key={product.id}
-              className="rounded-xl border p-5"
+              className="overflow-hidden rounded-2xl border border-zinc-200 bg-white"
             >
-              <h2 className="text-xl font-semibold">
-                {product.title}
-              </h2>
+              <div className="relative aspect-square bg-zinc-100">
+                <Image
+                  src={product.image_url}
+                  alt={product.title}
+                  fill
+                  sizes="(max-width: 640px) 50vw, 33vw"
+                  unoptimized
+                  className="object-cover"
+                />
+              </div>
 
-              <a
-                href={product.image_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-3 inline-block text-blue-500 underline"
-              >
-                Открыть фотографию
-              </a>
+              <div className="p-4">
+                <h2 className="text-sm font-semibold text-zinc-900">
+                  {product.title}
+                </h2>
+              </div>
             </article>
           ))}
         </div>
       )}
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<p className="p-6">Загружаем товары...</p>}>
+      <ProductCatalog />
+    </Suspense>
   );
 }
