@@ -3,6 +3,7 @@ import asyncio
 from io import BytesIO
 
 from minio import Minio
+from datetime import timedelta
 
 from app.domain.value_objects.image_key import ImageKey
 from app.infrastructure.config import MinioSettings
@@ -32,4 +33,16 @@ class MinioImageStorage:
             data=BytesIO(content),
             length=len(content),
             content_type=content_type,
+        )
+
+    
+    async def get_download_url(
+        self,
+        key: ImageKey,
+    ) -> str:
+        return await asyncio.to_thread(
+            self._client.presigned_get_object,
+            bucket_name=self._bucket,
+            object_name=key.value,
+            expires=timedelta(minutes=15),
         )
