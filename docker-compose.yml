@@ -97,6 +97,25 @@ services:
       - "traefik.http.services.backend.loadbalancer.server.port=8000"
       - "traefik.http.services.backend.loadbalancer.healthcheck.path=/health"
 
+  bot:
+    image: invix-bot:latest
+    restart: unless-stopped
+    environment:
+      BOT_TOKEN: ${BOT_TOKEN:?Set BOT_TOKEN in .env}
+      TELEGRAM_ADMIN_ID: ${TELEGRAM_ADMIN_ID:?Set TELEGRAM_ADMIN_ID in .env}
+      ADMIN_API_TOKEN: ${ADMIN_API_TOKEN:?Set ADMIN_API_TOKEN in .env}
+      MINI_APP_URL: ${MINI_APP_URL:?Set MINI_APP_URL in .env}
+      WEBHOOK_SECRET: ${WEBHOOK_SECRET:?Set WEBHOOK_SECRET in .env}
+      BACKEND_URL: http://gateway/api/backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.bot.rule=Path(`/telegram/webhook`)"
+      - "traefik.http.routers.bot.entrypoints=web"
+      - "traefik.http.routers.bot.priority=200"
+      - "traefik.http.services.bot.loadbalancer.server.port=8081"
+      - "traefik.http.services.bot.loadbalancer.healthcheck.path=/health"
+
+
 volumes:
   postgres_data:
   minio_data:

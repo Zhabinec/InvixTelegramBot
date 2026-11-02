@@ -1,7 +1,6 @@
-
-import asyncio
-
 import httpx
+
+from aiohttp import web
 from aiogram import Bot, Dispatcher, F, Router
 from aiogram.filters import Command, CommandStart
 from aiogram.types import (
@@ -10,13 +9,17 @@ from aiogram.types import (
     Message,
     WebAppInfo,
 )
+from aiogram.webhook.aiohttp_server import (
+    SimpleRequestHandler,
+    setup_application,
+)
 
 from config import BotSettings
 from filters.admin import AdminFilter
 from handlers.products import build_products_router
 
 
-async def main() -> None:
+def create_app() -> web.Application:
     settings = BotSettings()
 
     bot = Bot(token=settings.bot_token.get_secret_value())
@@ -60,16 +63,42 @@ async def main() -> None:
 
     dispatcher.include_router(router)
 
-    async with httpx.AsyncClient(
+    api_client = httpx.AsyncClient(
         base_url=settings.backend_url,
         timeout=30.0,
-    ) as api_client:
-        dispatcher.include_router(
-            build_products_router(settings, api_client)
-        )
+    )
 
-        await dispatcher.start_polling(bot)
+    dispatcher.include_router(
+        build_products_router(settings, api_client)
+    )
+
+    app = web.Application()
+
+    async def health(request: web.Request) -> web.Response:
+        return web.json_response({"status": "ok"})
+
+    app.router.add_get("/health", health)
+
+    SimpleRequestHandler(
+        dispatcher=dispatcher,
+        bot=bot,
+        secret_token=settings.webhook_secret.get_secret_value(),
+        handle_in_background=False,
+    ).register(app, path="/telegram/webhook")
+
+    setup_application(app, dispatcher, bot=bot)
+
+    async def close_api_client(app: web.Application) -> None:
+        await api_client.aclose()
+
+    app.on_cleanup.append(close_api_client)
+
+    return app
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    web.run_app(
+        create_app(),
+        host="0.0.0.0",
+        port=8081,
+    )
