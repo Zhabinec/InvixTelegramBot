@@ -4,6 +4,7 @@ import { Readable } from "node:stream";
 import { NextRequest } from "next/server";
 
 const MINIO_ORIGIN = "http://127.0.0.1:9000";
+const DOCKER_MINIO_ORIGIN = "http://minio:9000";
 
 function fetchImage(
   url: URL,
@@ -77,13 +78,15 @@ export async function GET(request: NextRequest) {
   }
 
   if (
-    url.origin !== MINIO_ORIGIN ||
+    (url.origin !== MINIO_ORIGIN &&
+      url.origin !== DOCKER_MINIO_ORIGIN) ||
     !url.pathname.startsWith("/products/") ||
     url.username ||
     url.password
   ) {
     return new Response("Image URL is not allowed", { status: 403 });
   }
+
 
   try {
     const upstreamOrigin =
