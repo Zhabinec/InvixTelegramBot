@@ -19,6 +19,7 @@ services:
   
   
   frontend:
+    build: ./frontend
     image: invix-frontend:latest
     restart: unless-stopped
     environment:
@@ -65,6 +66,7 @@ services:
       start_period: 10s
   
   backend:
+    build: ./backend
     image: invix-backend:latest
     restart: unless-stopped
     environment:
@@ -82,7 +84,7 @@ services:
 
       ADMIN_API_TOKEN: ${ADMIN_API_TOKEN}
     depends_on:
-      db:
+      migrate:
         condition: service_completed_successfully
       minio:
         condition: service_started
@@ -98,6 +100,7 @@ services:
       - "traefik.http.services.backend.loadbalancer.healthcheck.path=/health"
 
   bot:
+    build: ./bot
     image: invix-bot:latest
     restart: unless-stopped
     environment:
