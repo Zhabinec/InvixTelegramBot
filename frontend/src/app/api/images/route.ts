@@ -1,7 +1,65 @@
 
+import { request as httpRequest } from "node:http";
+import { Readable } from "node:stream";
 import { NextRequest } from "next/server";
 
 const MINIO_ORIGIN = "http://127.0.0.1:9000";
+
+function fetchImage(
+  url: URL,
+  upstreamOrigin: string,
+): Promise<Response> {
+  const upstream = new URL(upstreamOrigin);
+
+  return new Promise((resolve, reject) => {
+    const request = httpRequest(
+      {
+        hostname: upstream.hostname,
+        port: upstream.port,
+        method: "GET",
+        path: `${url.pathname}${url.search}`,
+        headers: {
+          Host: url.host,
+        },
+      },
+      (response) => {
+        const contentType = response.headers["content-type"];
+
+        if (
+          response.statusCode !== 200 ||
+          typeof contentType !== "string" ||
+          !contentType.startsWith("image/")
+        ) {
+          response.resume();
+          resolve(
+            new Response("Image unavailable", { status: 502 }),
+          );
+          return;
+        }
+
+        resolve(
+          new Response(
+            Readable.toWeb(response) as ReadableStream<Uint8Array>,
+            {
+              headers: {
+                "Content-Type": contentType,
+                "Cache-Control": "private, no-store",
+                "X-Content-Type-Options": "nosniff",
+              },
+            },
+          ),
+        );
+      },
+    );
+
+    request.setTimeout(10000, () => {
+      request.destroy(new Error("MinIO request timed out"));
+    });
+
+    request.on("error", reject);
+    request.end();
+  });
+}
 
 export async function GET(request: NextRequest) {
   const imageUrl = request.nextUrl.searchParams.get("url");
@@ -31,35 +89,7 @@ export async function GET(request: NextRequest) {
     const upstreamOrigin =
       process.env.MINIO_UPSTREAM_ORIGIN ?? MINIO_ORIGIN;
 
-    const upstreamUrl = new URL(
-      `${url.pathname}${url.search}`,
-      upstreamOrigin,
-    );
-
-    const response = await fetch(upstreamUrl, {
-      headers: {
-        Host: url.host,
-      },
-      cache: "no-store",
-      redirect: "error",
-    });
-    if (!response.ok || !response.body) {
-      return new Response("Image unavailable", { status: 502 });
-    }
-
-    const contentType = response.headers.get("content-type");
-
-    if (!contentType?.startsWith("image/")) {
-      return new Response("Invalid image content", { status: 502 });
-    }
-
-    return new Response(response.body, {
-      headers: {
-        "Content-Type": contentType,
-        "Cache-Control": "private, no-store",
-        "X-Content-Type-Options": "nosniff",
-      },
-    });
+    return await fetchImage(url, upstreamOrigin);
   } catch {
     return new Response("Failed to load image", { status: 502 });
   }
